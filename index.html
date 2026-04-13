@@ -1,71 +1,1705 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cool Website</title>
-    <style>
-        /* Reset default margin and padding */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23818CF8'/%3E%3Cstop offset='100%25' stop-color='%234338CA'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cpath d='M4 20 L16 25 L28 20 L16 15 Z' fill='white' opacity='0.35'/%3E%3Cpath d='M4 16 L16 21 L28 16 L16 11 Z' fill='white' opacity='0.65'/%3E%3Cpath d='M4 12 L16 17 L28 12 L16 7 Z' fill='white'/%3E%3C/svg%3E">
+<title>Inventray – Autonomous Inventory Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* Body styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-        }
+/* ── SPLASH SCREEN ── */
+.splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #07080A;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  -webkit-transition: opacity 0.6s ease;
+  transition: opacity 0.6s ease;
+  opacity: 1;
+}
+.splash.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+.splash.hidden {
+  display: none;
+}
+.splash-icon {
+  width: 72px; height: 72px; border-radius: 18px;
+  background: linear-gradient(135deg, #6366F1, #4338CA);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+  animation: splash-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.splash-icon svg { width: 36px; height: 36px; }
+.splash-brand {
+  font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 700;
+  color: #EAEDF3; letter-spacing: -0.02em;
+  animation: splash-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+.splash-slogan {
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
+  color: #565E73; letter-spacing: 0.14em; text-transform: uppercase;
+  margin-top: 8px;
+  animation: splash-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+.splash-loader {
+  width: 48px; height: 2px; background: #1E2230;
+  border-radius: 2px; margin-top: 40px; overflow: hidden;
+  animation: splash-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+}
+.splash-loader-bar {
+  width: 0%; height: 100%; background: #6366F1; border-radius: 2px;
+  animation: splash-load 1.8s ease-in-out 0.5s forwards;
+}
+@keyframes splash-pop {
+  from { opacity: 0; transform: translateY(16px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes splash-load {
+  0% { width: 0%; }
+  60% { width: 70%; }
+  100% { width: 100%; }
+}
 
-        /* Header styles */
-        header {
-            background-color: #0074D9;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-        }
+:root {
+  --bg: #07080A;
+  --bg-elevated: #0F1114;
+  --bg-card: #141720;
+  --bg-card-hover: #1A1E2A;
+  --border: #1E2230;
+  --border-accent: #2A3050;
+  --text-primary: #EAEDF3;
+  --text-secondary: #8B93A7;
+  --text-muted: #565E73;
+  --accent: #3B82F6;
+  --accent-light: #60A5FA;
+  --accent-glow: rgba(59, 130, 246, 0.15);
+  --accent-glow-strong: rgba(59, 130, 246, 0.3);
+  --green: #10B981;
+  --green-glow: rgba(16, 185, 129, 0.15);
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --font: 'Outfit', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
 
-        /* Content styles */
-        .content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+html { scroll-behavior: smooth; }
 
-        /* Footer styles */
-        footer {
-            text-align: center;
-            padding: 1rem;
-            background-color: #0074D9;
-            color: #fff;
-        }
-    </style>
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── UTILITIES ── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 120px 0; position: relative; }
+
+/* ── NAVIGATION ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(7, 8, 10, 0.75);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.nav-logo-text {
+  display: flex; flex-direction: column; line-height: 1.2;
+}
+.nav-brand {
+  font-weight: 700; font-size: 18px; color: var(--text-primary);
+}
+.nav-slogan {
+  font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em;
+  font-weight: 400;
+}
+.nav-logo-icon {
+  width: 32px; height: 32px; background: #6366F1;
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+}
+.nav-logo-icon svg { width: 18px; height: 18px; }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  color: var(--text-secondary); text-decoration: none; font-size: 14px;
+  font-weight: 500; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text-primary); }
+.nav-cta {
+  background: var(--accent); color: #fff; border: none; padding: 8px 20px;
+  border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: var(--font); transition: all 0.2s;
+}
+.nav-cta:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  padding: 160px 0 120px; position: relative; overflow: hidden;
+  min-height: 100vh; display: flex; align-items: center;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+}
+.hero-grid {
+  position: absolute; inset: 0; opacity: 0.03;
+  background-image:
+    linear-gradient(var(--text-muted) 1px, transparent 1px),
+    linear-gradient(90deg, var(--text-muted) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-glow {
+  position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-glow-2 {
+  position: absolute; bottom: -100px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(ellipse, rgba(16,185,129,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; text-align: center; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 100px; padding: 6px 16px 6px 8px; margin-bottom: 32px;
+  font-size: 13px; color: var(--text-secondary);
+  animation: fadeInUp 0.6s ease-out;
+}
+.hero-badge-dot {
+  width: 8px; height: 8px; background: var(--green); border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+}
+.hero-slogan {
+  font-size: 15px; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #818CF8; margin-bottom: 20px;
+  opacity: 1;
+}
+.hero h1 {
+  font-size: clamp(40px, 6vw, 72px); font-weight: 800;
+  line-height: 1.08; letter-spacing: -0.03em;
+  margin-bottom: 24px;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+.hero h1 .gradient {
+  background: linear-gradient(135deg, #818CF8 0%, #a78bfa 50%, #6366F1 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: clamp(17px, 2vw, 20px); color: var(--text-secondary);
+  max-width: 600px; margin: 0 auto 40px; line-height: 1.6; font-weight: 400;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+.hero-ctas {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+.btn-primary {
+  background: var(--accent); color: #fff; border: none;
+  padding: 14px 32px; border-radius: 10px; font-size: 16px;
+  font-weight: 600; cursor: pointer; font-family: var(--font);
+  transition: all 0.25s; text-decoration: none;
+  box-shadow: 0 0 30px var(--accent-glow-strong);
+}
+.btn-primary:hover {
+  background: var(--accent-light); transform: translateY(-2px);
+  box-shadow: 0 8px 40px var(--accent-glow-strong);
+}
+.btn-secondary {
+  background: transparent; color: var(--text-primary);
+  border: 1px solid var(--border-accent); padding: 14px 32px;
+  border-radius: 10px; font-size: 16px; font-weight: 600;
+  cursor: pointer; font-family: var(--font); transition: all 0.25s;
+  text-decoration: none;
+}
+.btn-secondary:hover {
+  background: var(--bg-card); border-color: var(--text-muted);
+  transform: translateY(-2px);
+}
+
+/* ── METRICS BAR ── */
+.metrics-bar {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border); border-radius: 16px; overflow: hidden;
+  max-width: 800px; margin: 60px auto 0;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+.metric {
+  background: var(--bg-card); padding: 28px 20px; text-align: center;
+}
+.metric-value {
+  font-size: 28px; font-weight: 700; color: var(--text-primary);
+  font-family: var(--mono); letter-spacing: -0.02em;
+}
+.metric-value .unit { font-size: 16px; color: var(--accent-light); }
+.metric-label {
+  font-size: 12px; color: var(--text-muted); margin-top: 4px;
+  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
+}
+
+/* ── DETECTION VISUAL ── */
+.detection-visual {
+  max-width: 700px; margin: 60px auto 0; border-radius: 20px;
+  overflow: hidden; border: 1px solid var(--border);
+  background: #0C0E14; position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: fadeInUp 0.6s ease-out 0.5s both;
+}
+.detection-visual svg { display: block; width: 100%; height: auto; }
+.detection-statusbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; background: rgba(15, 18, 25, 0.95);
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.detection-status-left {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text-secondary); font-weight: 500;
+}
+.detection-live-dot {
+  width: 8px; height: 8px; background: #10B981; border-radius: 50%;
+  animation: live-pulse 1.5s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+  50% { opacity: 0.5; box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+}
+.detection-confidence {
+  font-family: var(--mono); font-size: 14px; font-weight: 600; color: #10B981;
+}
+
+/* ── SECTION HEADERS ── */
+.section-eyebrow {
+  font-size: 13px; font-weight: 600; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 44px); font-weight: 700;
+  letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 16px;
+}
+.section-desc {
+  font-size: 17px; color: var(--text-secondary); max-width: 600px;
+  line-height: 1.7;
+}
+.section-header { margin-bottom: 64px; }
+.section-header.center { text-align: center; }
+.section-header.center .section-desc { margin: 0 auto; }
+
+/* ── PROBLEM SECTION ── */
+.problem-section { background: var(--bg); }
+.problem-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+  align-items: center;
+}
+.problem-list { display: flex; flex-direction: column; gap: 20px; }
+.problem-item {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 20px; background: var(--bg-card); border-radius: 12px;
+  border: 1px solid var(--border); transition: all 0.3s;
+}
+.problem-item:hover { border-color: var(--border-accent); background: var(--bg-card-hover); }
+.problem-icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(239, 68, 68, 0.1); color: var(--red);
+}
+.problem-icon svg { width: 20px; height: 20px; }
+.problem-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.problem-item p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+.problem-visual {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 40px; position: relative; overflow: hidden;
+}
+.problem-stat {
+  text-align: center; padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+.problem-stat:last-child { border-bottom: none; }
+.problem-stat-value {
+  font-size: 48px; font-weight: 800; font-family: var(--mono);
+  color: var(--red); letter-spacing: -0.03em;
+}
+.problem-stat-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+/* ── SOLUTION / PIPELINE ── */
+.solution-section { background: var(--bg-elevated); }
+.pipeline {
+  display: flex; gap: 0; align-items: stretch; position: relative;
+  padding: 20px 0;
+}
+.pipeline::before {
+  content: ''; position: absolute; top: 50%; left: 40px; right: 40px;
+  height: 2px; background: linear-gradient(90deg, var(--accent), var(--green));
+  opacity: 0.3; z-index: 0;
+}
+.pipeline-step {
+  flex: 1; text-align: center; position: relative; z-index: 1;
+  padding: 0 12px;
+}
+.pipeline-icon {
+  width: 64px; height: 64px; border-radius: 16px; margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-card); border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.pipeline-step:hover .pipeline-icon {
+  border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow);
+}
+.pipeline-icon svg { width: 28px; height: 28px; color: var(--accent-light); }
+.pipeline-step h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.pipeline-step p { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+.pipeline-arrow {
+  position: absolute; top: 50%; right: -8px; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 14px;
+}
+
+/* ── FEATURES GRID ── */
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin-top: 64px;
+}
+.feature-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 32px; transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.feature-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.feature-card:hover { border-color: var(--border-accent); transform: translateY(-4px); }
+.feature-card:hover::before { opacity: 1; }
+.feature-icon {
+  width: 44px; height: 44px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.feature-icon.blue { background: rgba(59,130,246,0.1); color: var(--accent-light); }
+.feature-icon.green { background: rgba(16,185,129,0.1); color: var(--green); }
+.feature-icon.amber { background: rgba(245,158,11,0.1); color: var(--amber); }
+.feature-icon svg { width: 22px; height: 22px; }
+.feature-card h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+.feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ── PROOF / VALIDATION ── */
+.proof-section { background: var(--bg); }
+.proof-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+  align-items: start;
+}
+.proof-metrics {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.proof-metric-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 28px; text-align: center;
+  transition: all 0.3s;
+}
+.proof-metric-card:hover { border-color: var(--accent); }
+.proof-metric-card .value {
+  font-size: 36px; font-weight: 800; font-family: var(--mono);
+  letter-spacing: -0.03em;
+}
+.proof-metric-card .value.blue { color: var(--accent-light); }
+.proof-metric-card .value.green { color: var(--green); }
+.proof-metric-card .value.amber { color: var(--amber); }
+.proof-metric-card .label {
+  font-size: 13px; color: var(--text-muted); margin-top: 6px;
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500;
+}
+.proof-detail {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 32px;
+}
+.proof-detail h3 {
+  font-size: 18px; font-weight: 600; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.proof-detail h3 .dot {
+  width: 10px; height: 10px; background: var(--green); border-radius: 50%;
+}
+
+/* JSON Preview */
+.json-preview {
+  background: #0A0C10; border-radius: 10px; padding: 24px;
+  font-family: var(--mono); font-size: 12.5px; line-height: 2;
+  overflow-x: auto; border: 1px solid var(--border);
+  white-space: pre;
+}
+.json-key { color: var(--accent-light); }
+.json-string { color: var(--green); }
+.json-number { color: var(--amber); }
+.json-bracket { color: var(--text-muted); }
+.json-comma { color: var(--text-muted); }
+
+/* ── USE CASES ── */
+.usecases-section { background: var(--bg-elevated); }
+.usecases-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+}
+.usecase-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 32px 24px; text-align: center;
+  transition: all 0.3s; cursor: default;
+}
+.usecase-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+.usecase-emoji { font-size: 40px; margin-bottom: 16px; display: block; }
+.usecase-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.usecase-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+/* ── INTEGRATION ── */
+.integration-section { background: var(--bg); }
+.integration-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+  align-items: center;
+}
+.integration-logos {
+  display: flex; gap: 20px; flex-wrap: wrap; margin-top: 24px;
+}
+.integration-logo {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 24px; font-weight: 600;
+  font-size: 14px; color: var(--text-secondary); transition: all 0.3s;
+}
+.integration-logo:hover { border-color: var(--accent); color: var(--text-primary); }
+.integration-features { display: flex; flex-direction: column; gap: 16px; }
+.integration-feature {
+  display: flex; align-items: center; gap: 12px; font-size: 15px;
+}
+.integration-check {
+  width: 24px; height: 24px; background: var(--green-glow);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.integration-check svg { width: 14px; height: 14px; color: var(--green); }
+
+/* ── COMPETITIVE ── */
+.competitive-section { background: var(--bg-elevated); }
+.competitive-table {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; width: 100%;
+}
+.competitive-table table { width: 100%; border-collapse: collapse; }
+.competitive-table th {
+  padding: 16px 24px; text-align: left; font-size: 13px;
+  color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+  font-weight: 600; border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+.competitive-table th:nth-child(2) {
+  color: var(--accent-light); background: var(--accent-glow);
+}
+.competitive-table td {
+  padding: 14px 24px; font-size: 14px; color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+.competitive-table td:nth-child(2) {
+  color: var(--text-primary); font-weight: 500;
+  background: var(--accent-glow);
+}
+.competitive-table tr:last-child td { border-bottom: none; }
+
+/* ── CTA SECTION ── */
+.cta-section {
+  padding: 120px 0; background: var(--bg); position: relative; overflow: hidden;
+}
+.cta-glow {
+  position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+}
+.cta-inner {
+  position: relative; z-index: 1; text-align: center;
+  max-width: 640px; margin: 0 auto;
+}
+.cta-inner h2 {
+  font-size: clamp(32px, 4vw, 48px); font-weight: 800;
+  letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.1;
+}
+.cta-inner p {
+  font-size: 18px; color: var(--text-secondary); margin-bottom: 40px;
+  line-height: 1.6;
+}
+.cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+/* ── CTA CARDS ── */
+.cta-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin-top: 48px;
+}
+.cta-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px; display: flex;
+  flex-direction: column; transition: all 0.3s;
+}
+.cta-card:hover { border-color: var(--border-accent); transform: translateY(-4px); }
+.cta-card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.cta-card-icon svg { width: 24px; height: 24px; }
+.cta-card-icon.blue { background: rgba(59,130,246,0.12); color: #60A5FA; }
+.cta-card-icon.green { background: rgba(16,185,129,0.12); color: #34D399; }
+.cta-card-icon.purple { background: rgba(139,92,246,0.12); color: #A78BFA; }
+.cta-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.cta-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; flex-grow: 1; margin-bottom: 24px; }
+.cta-card-btn {
+  display: block; width: 100%; padding: 12px; border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 600; cursor: pointer; text-align: center;
+  text-decoration: none; font-family: var(--font); transition: all 0.25s;
+}
+.cta-card-btn:hover { transform: translateY(-2px); }
+.cta-card-btn.blue {
+  background: linear-gradient(135deg, #3B82F6, #2563EB); color: #fff;
+  box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+}
+.cta-card-btn.blue:hover { box-shadow: 0 8px 30px rgba(59,130,246,0.4); }
+.cta-card-btn.green {
+  background: linear-gradient(135deg, #10B981, #059669); color: #fff;
+  box-shadow: 0 4px 20px rgba(16,185,129,0.3);
+}
+.cta-card-btn.green:hover { box-shadow: 0 8px 30px rgba(16,185,129,0.4); }
+.cta-card-btn.purple {
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED); color: #fff;
+  box-shadow: 0 4px 20px rgba(139,92,246,0.3);
+}
+.cta-card-btn.purple:hover { box-shadow: 0 8px 30px rgba(139,92,246,0.4); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  padding: 24px;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 40px; max-width: 560px; width: 100%;
+  max-height: 80vh; overflow-y: auto; position: relative;
+  transform: translateY(16px); transition: transform 0.3s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-close {
+  position: absolute; top: 16px; right: 16px; background: none;
+  border: none; color: var(--text-muted); cursor: pointer;
+  width: 32px; height: 32px; display: flex; align-items: center;
+  justify-content: center; border-radius: 8px; transition: all 0.2s;
+}
+.modal-close:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.modal-close svg { width: 20px; height: 20px; }
+.modal h2 { font-size: 22px; font-weight: 700; margin-bottom: 24px; }
+.modal h3 { font-size: 14px; font-weight: 600; color: var(--accent-light); margin-top: 20px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+.modal p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+.modal a { color: var(--accent-light); text-decoration: none; }
+.modal a:hover { text-decoration: underline; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border); padding: 40px 0;
+  background: var(--bg);
+}
+.footer-inner {
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+}
+.footer-text { font-size: 13px; color: var(--text-muted); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a {
+  font-size: 13px; color: var(--text-muted); text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--text-secondary); }
+
+/* ── SCROLL TO TOP ── */
+.scroll-top {
+  position: fixed; bottom: 32px; right: 32px; z-index: 200;
+  width: 48px; height: 48px; border-radius: 14px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--accent-light); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transform: translateY(12px);
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+.scroll-top.visible {
+  opacity: 1; pointer-events: auto; transform: translateY(0);
+}
+.scroll-top:hover {
+  background: var(--accent); color: #fff;
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px var(--accent-glow-strong);
+}
+.scroll-top svg { width: 22px; height: 22px; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  opacity: 0; transform: translateY(24px);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.animate-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ── MOBILE NAV MENU ── */
+.nav-hamburger {
+  display: none; background: none; border: none; cursor: pointer;
+  color: var(--text-secondary); padding: 4px; margin-left: 12px;
+}
+.nav-hamburger svg { width: 24px; height: 24px; }
+.nav-mobile-menu {
+  display: none; position: fixed; top: 56px; left: 0; right: 0;
+  background: var(--bg-elevated); border-bottom: 1px solid var(--border);
+  padding: 16px 24px; z-index: 99; flex-direction: column; gap: 4px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+.nav-mobile-menu.open { display: flex; }
+.nav-mobile-menu a {
+  color: var(--text-secondary); text-decoration: none; font-size: 15px;
+  font-weight: 500; padding: 12px 0; border-bottom: 1px solid var(--border);
+  transition: color 0.2s;
+}
+.nav-mobile-menu a:last-child { border-bottom: none; }
+.nav-mobile-menu a:hover { color: var(--text-primary); }
+
+/* ── RESPONSIVE: TABLET ── */
+@media (max-width: 968px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; align-items: center; }
+  .nav-mobile-menu { top: 64px; }
+  .problem-grid, .proof-grid, .integration-grid { grid-template-columns: 1fr; }
+  .metrics-bar { grid-template-columns: repeat(2, 1fr); }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .usecases-grid { grid-template-columns: 1fr 1fr; }
+  .pipeline { flex-direction: column; gap: 16px; }
+  .pipeline::before { display: none; }
+  .pipeline-arrow { display: none; }
+  .competitive-table { overflow-x: auto; }
+  .hero { padding: 140px 0 80px; min-height: auto; }
+  .section { padding: 100px 0; }
+  .section-header { margin-bottom: 48px; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+  .cta-buttons .btn-primary,
+  .cta-buttons .btn-secondary { width: 100%; max-width: 320px; text-align: center; }
+  .cta-cards { grid-template-columns: 1fr; max-width: 480px; margin: 48px auto 0; }
+  .modal { padding: 32px 24px; }
+}
+
+/* ── RESPONSIVE: MOBILE ── */
+@media (max-width: 600px) {
+  .container { padding: 0 16px; }
+  .section { padding: 64px 0; overflow: hidden; }
+
+  /* Nav */
+  .nav-inner { height: 56px; }
+  .nav-logo-icon { width: 28px; height: 28px; border-radius: 7px; }
+  .nav-logo-icon svg { width: 15px; height: 15px; }
+  .nav-brand { font-size: 16px; }
+  .nav-slogan { font-size: 8px; letter-spacing: 0.04em; }
+  .nav-cta { padding: 6px 14px; font-size: 13px; }
+  .nav-mobile-menu { top: 56px; }
+
+  /* Splash */
+  .splash-icon { width: 56px; height: 56px; border-radius: 14px; }
+  .splash-icon svg { width: 28px; height: 28px; }
+  .splash-brand { font-size: 24px; }
+  .splash-slogan { font-size: 11px; letter-spacing: 0.1em; }
+
+  /* Hero */
+  .hero { padding: 110px 0 60px; min-height: auto; }
+  .hero-bg { overflow: hidden; }
+  .hero-glow { width: 400px; height: 300px; }
+  .hero-glow-2 { width: 250px; height: 250px; }
+  .detection-visual { margin-top: 40px; border-radius: 14px; }
+  .detection-statusbar { padding: 10px 14px; }
+  .detection-status-left { font-size: 11px; gap: 6px; }
+  .detection-live-dot { width: 6px; height: 6px; }
+  .detection-confidence { font-size: 12px; }
+  .hero-badge { font-size: 11px; padding: 5px 12px 5px 7px; }
+  .hero-badge-dot { width: 6px; height: 6px; }
+  .hero h1 { font-size: 28px; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .hero-sub { font-size: 15px; margin-bottom: 28px; }
+  .hero-ctas { flex-direction: column; align-items: stretch; }
+  .btn-primary, .btn-secondary { padding: 14px 24px; font-size: 15px; text-align: center; width: 100%; display: block; }
+  .metrics-bar { grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 40px; }
+  .metric { padding: 20px 12px; }
+  .metric-value { font-size: 22px; }
+  .metric-value .unit { font-size: 13px; }
+  .metric-label { font-size: 10px; }
+
+  /* Section headers */
+  .section-header { margin-bottom: 36px; }
+  .section-eyebrow { font-size: 11px; letter-spacing: 0.1em; }
+  .section-title { font-size: 24px; }
+  .section-desc { font-size: 15px; }
+
+  /* Problem */
+  .problem-item { padding: 16px; gap: 12px; }
+  .problem-icon { width: 36px; height: 36px; border-radius: 8px; }
+  .problem-icon svg { width: 18px; height: 18px; }
+  .problem-item h4 { font-size: 14px; }
+  .problem-item p { font-size: 13px; }
+  .problem-visual { padding: 24px; }
+  .problem-stat { padding: 20px 0; }
+  .problem-stat-value { font-size: 36px; }
+  .problem-stat-label { font-size: 13px; }
+
+  /* Pipeline */
+  .pipeline { gap: 12px; padding: 0; }
+  .pipeline-step { display: flex; align-items: center; gap: 16px; text-align: left; padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
+  .pipeline-icon { width: 48px; height: 48px; min-width: 48px; border-radius: 12px; margin: 0; }
+  .pipeline-icon svg { width: 22px; height: 22px; }
+  .pipeline-step h4 { font-size: 14px; margin-bottom: 2px; }
+  .pipeline-step p { font-size: 12px; }
+
+  /* Features */
+  .features-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 36px; }
+  .feature-card { padding: 24px; }
+  .feature-icon { width: 40px; height: 40px; margin-bottom: 14px; }
+  .feature-card h3 { font-size: 16px; }
+  .feature-card p { font-size: 13px; }
+
+  /* Proof */
+  .proof-metrics { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .proof-metric-card { padding: 20px 12px; }
+  .proof-metric-card .value { font-size: 28px; }
+  .proof-metric-card .label { font-size: 11px; }
+  .proof-detail { padding: 24px 16px; }
+  .proof-detail h3 { font-size: 16px; }
+  .json-preview { padding: 14px; font-size: 10px; line-height: 1.9; word-break: break-all; white-space: pre-wrap; }
+
+  /* Use Cases */
+  .usecases-grid { grid-template-columns: 1fr; gap: 12px; }
+  .usecase-card { padding: 24px 20px; display: flex; align-items: center; gap: 16px; text-align: left; }
+  .usecase-emoji { font-size: 32px; margin-bottom: 0; flex-shrink: 0; }
+  .usecase-card h4 { font-size: 15px; margin-bottom: 2px; }
+  .usecase-card p { font-size: 13px; }
+
+  /* Integration */
+  .integration-features { gap: 12px; }
+  .integration-feature { font-size: 14px; }
+  .integration-logos { gap: 8px; }
+  .integration-logo { padding: 8px 14px; font-size: 12px; flex-grow: 1; text-align: center; }
+
+  /* Competitive table */
+  .competitive-table table { min-width: 0; width: 100%; }
+  .competitive-table th, .competitive-table td { padding: 10px 12px; font-size: 12px; white-space: normal; word-break: break-word; }
+  .competitive-table th:first-child, .competitive-table td:first-child { min-width: 90px; }
+  .competitive-table { overflow-x: hidden; }
+
+  /* CTA */
+  .cta-section { padding: 64px 0; overflow: hidden; }
+  .cta-glow { width: 400px; height: 300px; }
+  .cta-inner h2 { font-size: 26px; }
+  .cta-inner p { font-size: 15px; margin-bottom: 28px; }
+  .cta-buttons { flex-direction: column; align-items: stretch; }
+  .cta-cards { grid-template-columns: 1fr; gap: 16px; }
+  .cta-card { padding: 24px; }
+  .cta-card h3 { font-size: 16px; }
+  .cta-card p { font-size: 13px; margin-bottom: 20px; }
+
+  /* Footer */
+  .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+
+  /* Modals */
+  .modal { padding: 28px 20px; max-height: 85vh; border-radius: 14px; }
+  .modal h2 { font-size: 20px; margin-bottom: 20px; }
+  .modal h3 { font-size: 13px; margin-top: 16px; }
+  .modal p { font-size: 13px; }
+
+  /* Scroll to top */
+  .scroll-top { bottom: 20px; right: 20px; width: 44px; height: 44px; border-radius: 12px; }
+}
+
+/* ── RESPONSIVE: EXTRA SMALL ── */
+@media (max-width: 380px) {
+  .hero h1 { font-size: 24px; }
+  .metric-value { font-size: 20px; }
+  .metric-label { font-size: 9px; letter-spacing: 0.05em; }
+  .proof-metric-card .value { font-size: 24px; }
+  .proof-metric-card .label { font-size: 10px; }
+  .nav-slogan { display: none; }
+  .splash-brand { font-size: 22px; }
+  .splash-slogan { font-size: 10px; }
+  .json-preview { font-size: 9px; padding: 12px; }
+}
+</style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Cool Website</h1>
-        <p>Explore and enjoy!</p>
-    </header>
 
-    <div class="content">
-        <h2>About Me</h2>
-        <p>Meet our skilled Cybersecurity Analyst! With an eagle eye for vulnerabilities and a passion for protecting data, they ensure our systems stay resilient against cyber threats. Whether it’s analyzing logs, 
-            conducting penetration tests, or staying up-to-date with the latest security trends, they’re our frontline defenders in the digital realm</p>
-        <p>Feel free to reach out to me!</p>
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splash">
+  <div class="splash-icon">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16 L12 20 L22 16 L12 12 Z" fill="white" opacity="0.35"/><path d="M2 12 L12 16 L22 12 L12 8 Z" fill="white" opacity="0.65"/><path d="M2 8 L12 12 L22 8 L12 4 Z" fill="white"/></svg>
+  </div>
+  <div class="splash-brand">Inventray</div>
+  <div class="splash-slogan">Autonomous Inventory Intelligence</div>
+  <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+</div>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-inner">
+    <a href="javascript:void(0)" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16 L12 20 L22 16 L12 12 Z" fill="white" opacity="0.35"/><path d="M2 12 L12 16 L22 12 L12 8 Z" fill="white" opacity="0.65"/><path d="M2 8 L12 12 L22 8 L12 4 Z" fill="white"/></svg>
+      </div>
+      <div class="nav-logo-text">
+        <span class="nav-brand">Inventray</span>
+        <span class="nav-slogan">Autonomous Inventory Intelligence</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="javascript:void(0)" onclick="document.getElementById('problem').scrollIntoView({behavior:'smooth'})">Problem</a>
+      <a href="javascript:void(0)" onclick="document.getElementById('solution').scrollIntoView({behavior:'smooth'})">Lösung</a>
+      <a href="javascript:void(0)" onclick="document.getElementById('proof').scrollIntoView({behavior:'smooth'})">Ergebnisse</a>
+      <a href="javascript:void(0)" onclick="document.getElementById('usecases').scrollIntoView({behavior:'smooth'})">Use Cases</a>
+      <a href="javascript:void(0)" onclick="document.getElementById('integration').scrollIntoView({behavior:'smooth'})">Integration</a>
     </div>
-    
-<script 
-    src='https://cdn.jotfor.ms/agent/embedjs/019b3d0dfc217f53b57f2758c4f2a2d03561/embed.js'>
+    <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Demo anfragen</button>
+    <button class="nav-hamburger" id="navHamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open'); this.classList.toggle('open')" aria-label="Menü">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-mobile-menu" id="mobileMenu">
+  <a href="javascript:void(0)" onclick="document.getElementById('problem').scrollIntoView({behavior:'smooth'}); document.getElementById('mobileMenu').classList.remove('open')">Problem</a>
+  <a href="javascript:void(0)" onclick="document.getElementById('solution').scrollIntoView({behavior:'smooth'}); document.getElementById('mobileMenu').classList.remove('open')">Lösung</a>
+  <a href="javascript:void(0)" onclick="document.getElementById('proof').scrollIntoView({behavior:'smooth'}); document.getElementById('mobileMenu').classList.remove('open')">Ergebnisse</a>
+  <a href="javascript:void(0)" onclick="document.getElementById('usecases').scrollIntoView({behavior:'smooth'}); document.getElementById('mobileMenu').classList.remove('open')">Use Cases</a>
+  <a href="javascript:void(0)" onclick="document.getElementById('integration').scrollIntoView({behavior:'smooth'}); document.getElementById('mobileMenu').classList.remove('open')">Integration</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Inventray One · 93,21 % Erkennungsgenauigkeit erreicht
+    </div>
+    <h1>
+      Inventar automatisch erfassen –<br>
+      <span class="gradient">mit nur einer Kamera.</span>
+    </h1>
+    <p class="hero-sub">
+      Inventray One erkennt, zählt und überträgt Bestände direkt in Ihr ERP-System. Auf jedem Smartphone. In Sekunden.
+    </p>
+    <div class="hero-ctas">
+      <a href="javascript:void(0)" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})" class="btn-primary">Demo anfragen</a>
+      <a href="javascript:void(0)" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})" class="btn-secondary">Pilotkunde werden</a>
+    </div>
+
+    <div class="metrics-bar">
+      <div class="metric">
+        <div class="metric-value" style="color:#10B981;" data-count="93.2" data-decimal="1" data-prefix="" data-suffix=""><span class="count-num">0</span><span class="unit" style="color:#34D399;">%</span></div>
+        <div class="metric-label">Genauigkeit</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" style="color:#60A5FA;" data-count="140" data-decimal="0" data-prefix="~" data-suffix=""><span class="count-num">0</span><span class="unit" style="color:#93C5FD;">ms</span></div>
+        <div class="metric-label">Pro Bild</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" data-count="252" data-decimal="0" data-prefix="" data-suffix=""><span class="count-num">0</span></div>
+        <div class="metric-label">Testprodukte</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value" data-count="90.4" data-decimal="1" data-prefix="" data-suffix=""><span class="count-num">0</span><span class="unit">%</span></div>
+        <div class="metric-label">Ø Confidence</div>
+      </div>
+    </div>
+
+    <!-- Detection Visual -->
+    <div class="detection-visual">
+      <svg viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="shelf-g" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2a2d3a"/>
+            <stop offset="100%" stop-color="#1e2130"/>
+          </linearGradient>
+          <linearGradient id="pegboard" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1a1d27"/>
+            <stop offset="100%" stop-color="#141722"/>
+          </linearGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- Background -->
+        <rect width="700" height="460" fill="url(#pegboard)"/>
+        <!-- Pegboard dots -->
+        <g opacity="0.08">
+          <circle cx="50" cy="30" r="2" fill="#fff"/><circle cx="100" cy="30" r="2" fill="#fff"/>
+          <circle cx="150" cy="30" r="2" fill="#fff"/><circle cx="200" cy="30" r="2" fill="#fff"/>
+          <circle cx="250" cy="30" r="2" fill="#fff"/><circle cx="300" cy="30" r="2" fill="#fff"/>
+          <circle cx="350" cy="30" r="2" fill="#fff"/><circle cx="400" cy="30" r="2" fill="#fff"/>
+          <circle cx="450" cy="30" r="2" fill="#fff"/><circle cx="500" cy="30" r="2" fill="#fff"/>
+          <circle cx="550" cy="30" r="2" fill="#fff"/><circle cx="600" cy="30" r="2" fill="#fff"/>
+          <circle cx="650" cy="30" r="2" fill="#fff"/>
+          <circle cx="50" cy="60" r="2" fill="#fff"/><circle cx="100" cy="60" r="2" fill="#fff"/>
+          <circle cx="150" cy="60" r="2" fill="#fff"/><circle cx="200" cy="60" r="2" fill="#fff"/>
+          <circle cx="250" cy="60" r="2" fill="#fff"/><circle cx="300" cy="60" r="2" fill="#fff"/>
+          <circle cx="350" cy="60" r="2" fill="#fff"/><circle cx="400" cy="60" r="2" fill="#fff"/>
+          <circle cx="450" cy="60" r="2" fill="#fff"/><circle cx="500" cy="60" r="2" fill="#fff"/>
+          <circle cx="550" cy="60" r="2" fill="#fff"/><circle cx="600" cy="60" r="2" fill="#fff"/>
+          <circle cx="650" cy="60" r="2" fill="#fff"/>
+          <circle cx="450" cy="170" r="2" fill="#fff"/><circle cx="500" cy="170" r="2" fill="#fff"/>
+          <circle cx="550" cy="170" r="2" fill="#fff"/><circle cx="600" cy="170" r="2" fill="#fff"/>
+          <circle cx="650" cy="170" r="2" fill="#fff"/>
+          <circle cx="450" cy="200" r="2" fill="#fff"/><circle cx="500" cy="200" r="2" fill="#fff"/>
+          <circle cx="550" cy="200" r="2" fill="#fff"/><circle cx="600" cy="200" r="2" fill="#fff"/>
+          <circle cx="650" cy="200" r="2" fill="#fff"/>
+        </g>
+
+        <!-- Shelf surfaces -->
+        <rect x="10" y="150" width="680" height="6" fill="#3a3d4a" rx="1"/>
+        <rect x="10" y="300" width="680" height="6" fill="#3a3d4a" rx="1"/>
+        <rect x="10" y="440" width="680" height="6" fill="#3a3d4a" rx="1"/>
+        <!-- Shelf front edges (3D effect) -->
+        <rect x="10" y="153" width="680" height="3" fill="#2a2d3a" rx="1"/>
+        <rect x="10" y="303" width="680" height="3" fill="#2a2d3a" rx="1"/>
+        <rect x="10" y="443" width="680" height="3" fill="#2a2d3a" rx="1"/>
+
+        <!-- ═══ ROW 1: Bottles ═══ -->
+        <!-- Red/Orange bottles -->
+        <rect x="30" y="62" width="24" height="82" rx="5" fill="#c0392b"/><rect x="36" y="55" width="12" height="12" rx="3" fill="#922b21"/>
+        <rect x="58" y="58" width="24" height="86" rx="5" fill="#e74c3c"/><rect x="64" y="51" width="12" height="12" rx="3" fill="#c0392b"/>
+        <rect x="86" y="60" width="24" height="84" rx="5" fill="#d35400"/><rect x="92" y="53" width="12" height="12" rx="3" fill="#a04000"/>
+        <rect x="114" y="56" width="24" height="88" rx="5" fill="#e74c3c"/><rect x="120" y="49" width="12" height="12" rx="3" fill="#b03a2e"/>
+        <rect x="142" y="64" width="24" height="80" rx="5" fill="#c0392b"/><rect x="148" y="57" width="12" height="12" rx="3" fill="#922b21"/>
+        
+        <!-- Silver cans -->
+        <rect x="210" y="65" width="34" height="78" rx="8" fill="#7f8c8d"/><ellipse cx="227" cy="65" rx="17" ry="5" fill="#95a5a6"/>
+        <rect x="248" y="62" width="34" height="81" rx="8" fill="#95a5a6"/><ellipse cx="265" cy="62" rx="17" ry="5" fill="#b0b8bc"/>
+        <rect x="286" y="67" width="34" height="76" rx="8" fill="#bdc3c7"/><ellipse cx="303" cy="67" rx="17" ry="5" fill="#d5dbdb"/>
+        <rect x="324" y="60" width="34" height="83" rx="8" fill="#7f8c8d"/><ellipse cx="341" cy="60" rx="17" ry="5" fill="#95a5a6"/>
+
+        <!-- Pump bottles (blue/teal) -->
+        <rect x="430" y="68" width="38" height="75" rx="7" fill="#2980b9"/>
+        <rect x="443" y="42" width="5" height="28" fill="#5dade2"/><rect x="436" y="38" width="18" height="8" rx="3" fill="#3498db"/>
+        <rect x="480" y="64" width="38" height="79" rx="7" fill="#5dade2"/>
+        <rect x="493" y="38" width="5" height="28" fill="#85c1e9"/><rect x="486" y="34" width="18" height="8" rx="3" fill="#5dade2"/>
+        
+        <!-- White bottles -->
+        <rect x="560" y="65" width="30" height="78" rx="6" fill="#ecf0f1"/><rect x="570" y="48" width="5" height="20" fill="#d5d8dc"/><rect x="565" y="44" width="14" height="8" rx="3" fill="#ecf0f1"/>
+        <rect x="596" y="60" width="30" height="83" rx="6" fill="#f0f3f4"/><rect x="606" y="43" width="5" height="20" fill="#d5d8dc"/><rect x="601" y="39" width="14" height="8" rx="3" fill="#f0f3f4"/>
+        <rect x="632" y="68" width="30" height="75" rx="6" fill="#e5e8e8"/><rect x="642" y="51" width="5" height="20" fill="#d5d8dc"/><rect x="637" y="47" width="14" height="8" rx="3" fill="#e5e8e8"/>
+
+        <!-- ═══ ROW 2: Packages & Tubes ═══ -->
+        <!-- Green pouches -->
+        <rect x="30" y="185" width="55" height="70" rx="8" fill="#27ae60"/>
+        <rect x="37" y="195" width="41" height="18" rx="3" fill="#2ecc71" opacity="0.5"/>
+        <rect x="95" y="188" width="55" height="67" rx="8" fill="#1e8449"/>
+        <rect x="102" y="198" width="41" height="18" rx="3" fill="#27ae60" opacity="0.5"/>
+
+        <!-- Orange/Yellow boxes -->
+        <rect x="210" y="178" width="65" height="75" rx="4" fill="#f39c12"/>
+        <rect x="216" y="184" width="53" height="32" rx="2" fill="#e67e22"/>
+        <rect x="282" y="182" width="60" height="71" rx="4" fill="#f5b041"/>
+        <rect x="288" y="188" width="48" height="30" rx="2" fill="#eb984e"/>
+        <rect x="350" y="180" width="55" height="73" rx="4" fill="#f39c12"/>
+        <rect x="356" y="186" width="43" height="28" rx="2" fill="#d68910"/>
+
+        <!-- Cream/cosmetic tubes -->
+        <rect x="460" y="190" width="26" height="62" rx="10" fill="#fdfefe"/><rect x="466" y="184" width="14" height="10" rx="4" fill="#d5dbdb"/>
+        <rect x="492" y="186" width="26" height="66" rx="10" fill="#aed6f1"/><rect x="498" y="180" width="14" height="10" rx="4" fill="#85c1e9"/>
+        <rect x="524" y="192" width="26" height="60" rx="10" fill="#fdfefe"/><rect x="530" y="186" width="14" height="10" rx="4" fill="#d5dbdb"/>
+        <rect x="556" y="188" width="26" height="64" rx="10" fill="#d4efdf"/><rect x="562" y="182" width="14" height="10" rx="4" fill="#a9dfbf"/>
+
+        <!-- ═══ ROW 3: Mixed products ═══ -->
+        <!-- Tall pump bottles -->
+        <rect x="30" y="330" width="42" height="80" rx="7" fill="#d4ac0d"/>
+        <rect x="45" y="308" width="5" height="24" fill="#b7950b"/><rect x="38" y="304" width="18" height="8" rx="3" fill="#d4ac0d"/>
+        <rect x="82" y="325" width="42" height="85" rx="7" fill="#1abc9c"/>
+        <rect x="97" y="303" width="5" height="24" fill="#16a085"/><rect x="90" y="299" width="18" height="8" rx="3" fill="#1abc9c"/>
+
+        <!-- Dark bottles -->
+        <rect x="180" y="328" width="32" height="82" rx="6" fill="#1c2833"/>
+        <rect x="217" y="332" width="32" height="78" rx="6" fill="#273746"/>
+        <rect x="254" y="326" width="32" height="84" rx="6" fill="#212f3d"/>
+        <rect x="291" y="330" width="32" height="80" rx="6" fill="#1c2833"/>
+
+        <!-- Purple package -->
+        <rect x="380" y="338" width="70" height="72" rx="5" fill="#8e44ad" opacity="0.8"/>
+        <rect x="387" y="348" width="56" height="24" rx="3" fill="#9b59b6" opacity="0.5"/>
+        <!-- Snack bag -->
+        <rect x="458" y="342" width="55" height="68" rx="6" fill="#f5b041"/>
+        <rect x="465" y="350" width="41" height="22" rx="3" fill="#e67e22" opacity="0.6"/>
+
+        <!-- Blue bottles -->
+        <rect x="555" y="328" width="28" height="82" rx="6" fill="#2980b9"/><ellipse cx="569" cy="328" rx="14" ry="4" fill="#5499c7"/>
+        <rect x="588" y="332" width="28" height="78" rx="6" fill="#3498db"/><ellipse cx="602" cy="332" rx="14" ry="4" fill="#5dade2"/>
+        <rect x="621" y="326" width="28" height="84" rx="6" fill="#2471a3"/><ellipse cx="635" cy="326" rx="14" ry="4" fill="#2e86c1"/>
+        <rect x="654" y="330" width="28" height="80" rx="6" fill="#2e86c1"/><ellipse cx="668" cy="330" rx="14" ry="4" fill="#5499c7"/>
+
+        <!-- ═══ DETECTION BOXES ═══ -->
+        <g filter="url(#glow)" opacity="0.85">
+          <!-- Row 1 -->
+          <rect x="22" y="36" width="154" height="116" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <rect x="202" y="48" width="166" height="104" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <rect x="422" y="28" width="108" height="124" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <rect x="550" y="32" width="122" height="120" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <!-- Row 2 -->
+          <rect x="22" y="172" width="138" height="90" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <rect x="202" y="168" width="212" height="94" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <rect x="452" y="174" width="140" height="88" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <!-- Row 3 -->
+          <rect x="22" y="294" width="112" height="120" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <rect x="172" y="316" width="158" height="100" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <rect x="372" y="328" width="150" height="86" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <rect x="546" y="318" width="146" height="98" rx="4" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+        </g>
+
+        <!-- Blue fill overlay -->
+        <g opacity="0.04">
+          <rect x="22" y="36" width="154" height="116" rx="4" fill="#3B82F6"/>
+          <rect x="202" y="48" width="166" height="104" rx="4" fill="#3B82F6"/>
+          <rect x="422" y="28" width="108" height="124" rx="4" fill="#3B82F6"/>
+          <rect x="550" y="32" width="122" height="120" rx="4" fill="#3B82F6"/>
+          <rect x="22" y="172" width="138" height="90" rx="4" fill="#3B82F6"/>
+          <rect x="202" y="168" width="212" height="94" rx="4" fill="#3B82F6"/>
+          <rect x="452" y="174" width="140" height="88" rx="4" fill="#3B82F6"/>
+          <rect x="22" y="294" width="112" height="120" rx="4" fill="#3B82F6"/>
+          <rect x="172" y="316" width="158" height="100" rx="4" fill="#3B82F6"/>
+          <rect x="372" y="328" width="150" height="86" rx="4" fill="#3B82F6"/>
+          <rect x="546" y="318" width="146" height="98" rx="4" fill="#3B82F6"/>
+        </g>
+
+        <!-- ═══ CONFIDENCE LABELS ═══ -->
+        <g font-family="JetBrains Mono,monospace" font-size="12" font-weight="600">
+          <!-- Row 1 -->
+          <rect x="24" y="37" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="44" y="52" fill="white" text-anchor="middle">0.92</text>
+          <rect x="204" y="49" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="224" y="64" fill="white" text-anchor="middle">0.95</text>
+          <rect x="424" y="29" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="444" y="44" fill="white" text-anchor="middle">0.95</text>
+          <rect x="552" y="33" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="572" y="48" fill="white" text-anchor="middle">0.87</text>
+          <!-- Row 2 -->
+          <rect x="24" y="173" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="44" y="188" fill="white" text-anchor="middle">0.89</text>
+          <rect x="204" y="169" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="224" y="184" fill="white" text-anchor="middle">0.91</text>
+          <rect x="454" y="175" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="474" y="190" fill="white" text-anchor="middle">0.86</text>
+          <!-- Row 3 -->
+          <rect x="24" y="295" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="44" y="310" fill="white" text-anchor="middle">0.93</text>
+          <rect x="174" y="317" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="194" y="332" fill="white" text-anchor="middle">0.98</text>
+          <rect x="374" y="329" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="394" y="344" fill="white" text-anchor="middle">0.88</text>
+          <rect x="548" y="319" width="40" height="20" rx="4" fill="rgba(59,130,246,0.9)"/>
+          <text x="568" y="334" fill="white" text-anchor="middle">0.90</text>
+        </g>
+      </svg>
+      <div class="detection-statusbar">
+        <div class="detection-status-left">
+          <span class="detection-live-dot"></span>
+          Live-Erkennung aktiv – 12 Produkte erkannt
+        </div>
+        <span class="detection-confidence">90.4%</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section problem-section" id="problem">
+  <div class="container">
+    <div class="problem-grid">
+      <div>
+        <div class="section-header animate-in">
+          <div class="section-eyebrow">Das Problem</div>
+          <h2 class="section-title">Inventur ist noch immer<br>manuell und fehleranfällig</h2>
+          <p class="section-desc">Klassische Bestandserfassung kostet Zeit, Geld und produziert Fehler – ob im Einzelhandel, in der Logistik oder in der Gastronomie.</p>
+        </div>
+        <div class="problem-list animate-in">
+          <div class="problem-item">
+            <div class="problem-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            </div>
+            <div>
+              <h4>Manuelle Zählung & Barcode-Scanning</h4>
+              <p>Zeitintensiv, fehleranfällig und abhängig von Spezialhardware (MDE-Geräte).</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+              <h4>Hohe Fehlerquoten</h4>
+              <p>Fehlbestände führen zu Umsatzeinbußen, Überbestellungen und Verderb.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <h4>Hohe Kosten & Zeitaufwand</h4>
+              <p>Regelmäßige Nachzählungen und aufwändige Abgleichprozesse binden Personal.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="problem-visual animate-in">
+        <div class="problem-stat">
+          <div class="problem-stat-value">80%</div>
+          <div class="problem-stat-label">der Inventurzeit entfällt auf manuelle Prozesse</div>
+        </div>
+        <div class="problem-stat">
+          <div class="problem-stat-value" style="color: var(--amber)">5–10×</div>
+          <div class="problem-stat-label">langsamer als KI-gestützte Erfassung</div>
+        </div>
+        <div class="problem-stat">
+          <div class="problem-stat-value" style="color: var(--accent-light)">€ Mrd.</div>
+          <div class="problem-stat-label">jährliche Verluste durch Bestandsfehler weltweit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION / PIPELINE -->
+<section class="section solution-section" id="solution">
+  <div class="container">
+    <div class="section-header center animate-in">
+      <div class="section-eyebrow">Die Lösung</div>
+      <h2 class="section-title">Von der Kamera zum ERP –<br>vollautomatisch</h2>
+      <p class="section-desc">Ein Scan genügt. Unsere KI erkennt Produkte, versteht die 3D-Struktur und liefert fertige Inventardaten – bereit für Ihr System.</p>
+    </div>
+
+    <div class="pipeline animate-in">
+      <div class="pipeline-step">
+        <div class="pipeline-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <h4>Kamera Scan</h4>
+        <p>Regal oder Lager mit dem Smartphone erfassen</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <h4>Objekterkennung</h4>
+        <p>YOLOv8 identifiziert einzelne Produkte (93,2 %)</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <h4>3D-Tiefenschätzung</h4>
+        <p>MiDaS analysiert Tiefe und räumliche Struktur</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h4>3D-Fusion</h4>
+        <p>Intelligente Verknüpfung von 2D + 3D Daten</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h4>ERP Output</h4>
+        <p>Strukturierte JSON-Daten für Ihr System</p>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card animate-in">
+        <div class="feature-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <h3>Keine Spezialhardware</h3>
+        <p>Funktioniert mit jedem modernen Smartphone oder Tablet – sofort einsatzbereit.</p>
+      </div>
+      <div class="feature-card animate-in">
+        <div class="feature-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Echtzeit-Verarbeitung</h3>
+        <p>Ergebnisse in unter 140 ms pro Bild. Geeignet für Live-Scanning im Tagesgeschäft.</p>
+      </div>
+      <div class="feature-card animate-in">
+        <div class="feature-icon amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Confidence Scoring</h3>
+        <p>Jede Messung wird mit einem Vertrauenswert versehen – unsichere Zählungen werden markiert.</p>
+      </div>
+      <div class="feature-card animate-in">
+        <div class="feature-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        </div>
+        <h3>3D-Erkennung</h3>
+        <p>Erkennt auch überlappende und gestapelte Produkte durch 3D-Raumverständnis.</p>
+      </div>
+      <div class="feature-card animate-in">
+        <div class="feature-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3>Volumen & Zählung</h3>
+        <p>Automatische Moduswahl: Einzelzählung für diskrete Produkte, Volumen für Schüttgut.</p>
+      </div>
+      <div class="feature-card animate-in">
+        <div class="feature-icon amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        </div>
+        <h3>Audit-Trail</h3>
+        <p>Jede Inventurerfassung als nachvollziehbares „Inventory Event" mit Zeitstempel und Device-ID.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF / VALIDATION -->
+<section class="section proof-section" id="proof">
+  <div class="container">
+    <div class="section-header center animate-in">
+      <div class="section-eyebrow">Validierte Ergebnisse</div>
+      <h2 class="section-title">Bereits getestet.<br>Bereits bewiesen.</h2>
+      <p class="section-desc">Konkrete Ergebnisse aus realen Testszenarien – keine theoretischen Werte.</p>
+    </div>
+
+    <div class="proof-grid">
+      <div class="proof-metrics animate-in">
+        <div class="proof-metric-card">
+          <div class="value blue">93,21%</div>
+          <div class="label">mAP@50 Genauigkeit</div>
+        </div>
+        <div class="proof-metric-card">
+          <div class="value green">90,4%</div>
+          <div class="label">Ø Confidence Score</div>
+        </div>
+        <div class="proof-metric-card">
+          <div class="value amber">~140ms</div>
+          <div class="label">Ø Verarbeitungszeit</div>
+        </div>
+        <div class="proof-metric-card">
+          <div class="value blue">252</div>
+          <div class="label">Erkannte Produkte</div>
+        </div>
+        <div class="proof-metric-card">
+          <div class="value green">7,1 FPS</div>
+          <div class="label">Durchsatz</div>
+        </div>
+        <div class="proof-metric-card">
+          <div class="value amber">5/5</div>
+          <div class="label">Testszenarien bestanden</div>
+        </div>
+      </div>
+      <div class="proof-detail animate-in">
+        <h3><span class="dot"></span> ERP-Ready JSON Output</h3>
+        <div class="json-preview"><span class="json-bracket">{</span>
+  <span class="json-key">"inventory_event_id"</span><span class="json-bracket">:</span> <span class="json-string">"c890fb6d-5746-49d3-..."</span><span class="json-comma">,</span>
+  <span class="json-key">"timestamp"</span><span class="json-bracket">:</span>           <span class="json-string">"2026-01-11T01:58:15"</span><span class="json-comma">,</span>
+  <span class="json-key">"location_id"</span><span class="json-bracket">:</span>          <span class="json-string">"store_001_shelf_A3"</span><span class="json-comma">,</span>
+  <span class="json-key">"device_id"</span><span class="json-bracket">:</span>            <span class="json-string">"mobile_scanner"</span><span class="json-comma">,</span>
+  <span class="json-key">"item_type"</span><span class="json-bracket">:</span>            <span class="json-string">"cereal_box"</span><span class="json-comma">,</span>
+  <span class="json-key">"quantity"</span><span class="json-bracket">:</span>             <span class="json-number">48</span><span class="json-comma">,</span>
+  <span class="json-key">"confidence_score"</span><span class="json-bracket">:</span>    <span class="json-number">0.91</span><span class="json-comma">,</span>
+  <span class="json-key">"estimation_mode"</span><span class="json-bracket">:</span>     <span class="json-string">"count"</span><span class="json-comma">,</span>
+  <span class="json-key">"metadata"</span><span class="json-bracket">:</span> <span class="json-bracket">{</span>
+    <span class="json-key">"processing_time_s"</span><span class="json-bracket">:</span>  <span class="json-number">0.145</span><span class="json-comma">,</span>
+    <span class="json-key">"detections"</span><span class="json-bracket">:</span>         <span class="json-number">48</span><span class="json-comma">,</span>
+    <span class="json-key">"avg_depth_meters"</span><span class="json-bracket">:</span>   <span class="json-number">2.3</span><span class="json-comma">,</span>
+    <span class="json-key">"depth_std"</span><span class="json-bracket">:</span>          <span class="json-number">0.25</span><span class="json-comma">,</span>
+    <span class="json-key">"image_resolution"</span><span class="json-bracket">:</span>   <span class="json-string">"1920x1080"</span><span class="json-comma">,</span>
+    <span class="json-key">"dedup_removed"</span><span class="json-bracket">:</span>      <span class="json-number">3</span>
+  <span class="json-bracket">}</span>
+<span class="json-bracket">}</span></div>
+        <p style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">Kompatibel mit SAP, Microsoft Dynamics und individuellen Systemen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="section usecases-section" id="usecases">
+  <div class="container">
+    <div class="section-header center animate-in">
+      <div class="section-eyebrow">Einsatzbereiche</div>
+      <h2 class="section-title">Eine Plattform.<br>Viele Branchen.</h2>
+    </div>
+    <div class="usecases-grid animate-in">
+      <div class="usecase-card">
+        <span class="usecase-emoji">🛒</span>
+        <h4>Einzelhandel</h4>
+        <p>Regal-Inventur in Supermärkten und Filialketten – schnell und präzise.</p>
+      </div>
+      <div class="usecase-card">
+        <span class="usecase-emoji">📦</span>
+        <h4>Lager & Logistik</h4>
+        <p>Bestandserfassung in Logistikzentren und Distributionslagern.</p>
+      </div>
+      <div class="usecase-card">
+        <span class="usecase-emoji">🍳</span>
+        <h4>Gastronomie</h4>
+        <p>Zutaten, Kühlräume und Lager – Verderb reduzieren, Transparenz schaffen.</p>
+      </div>
+      <div class="usecase-card">
+        <span class="usecase-emoji">🏭</span>
+        <h4>Industrie</h4>
+        <p>Volumenmessung bei Schüttgut, Flüssigkeiten und unregelmäßigen Gütern.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATION -->
+<section class="section integration-section" id="integration">
+  <div class="container">
+    <div class="integration-grid">
+      <div class="animate-in">
+        <div class="section-header">
+          <div class="section-eyebrow">Integration</div>
+          <h2 class="section-title">Passt in Ihre bestehende Infrastruktur</h2>
+          <p class="section-desc">API-first Design für nahtlose Anbindung an Ihr ERP, Warenwirtschaft oder individuelles Backend.</p>
+        </div>
+        <div class="integration-features">
+          <div class="integration-feature">
+            <div class="integration-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            ERP-ready JSON Output
+          </div>
+          <div class="integration-feature">
+            <div class="integration-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            REST API Integration
+          </div>
+          <div class="integration-feature">
+            <div class="integration-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            Inventory Events für Audit-Trail
+          </div>
+          <div class="integration-feature">
+            <div class="integration-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            Offline-First mit automatischem Sync
+          </div>
+          <div class="integration-feature">
+            <div class="integration-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            Batch-Verarbeitung für Video & Bilder
+          </div>
+        </div>
+      </div>
+      <div class="animate-in">
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Kompatibel mit</p>
+        <div class="integration-logos">
+          <div class="integration-logo">SAP</div>
+          <div class="integration-logo">Microsoft Dynamics</div>
+          <div class="integration-logo">Navision</div>
+          <div class="integration-logo">REST APIs</div>
+          <div class="integration-logo">Custom ERP</div>
+        </div>
+        <div style="margin-top: 40px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 28px;">
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Tech Stack</p>
+          <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7;">
+            <span style="color: var(--accent-light); font-family: var(--mono);">Mobile:</span> React Native / Flutter (iOS & Android)<br>
+            <span style="color: var(--accent-light); font-family: var(--mono);">Backend:</span> FastAPI + PyTorch + TorchServe<br>
+            <span style="color: var(--accent-light); font-family: var(--mono);">KI:</span> YOLOv8 + MiDaS v3<br>
+            <span style="color: var(--accent-light); font-family: var(--mono);">Cloud:</span> Docker-basiert, skalierbar
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITIVE ADVANTAGE -->
+<section class="section competitive-section">
+  <div class="container">
+    <div class="section-header center animate-in">
+      <div class="section-eyebrow">Wettbewerbsvorteil</div>
+      <h2 class="section-title">Warum Inventray One?</h2>
+    </div>
+    <div class="competitive-table animate-in">
+      <table>
+        <thead>
+          <tr>
+            <th>Kriterium</th>
+            <th>Inventray One</th>
+            <th>Klassische Inventur</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Geschwindigkeit</td><td>~140 ms pro Scan</td><td>Minuten pro Regal</td></tr>
+          <tr><td>Genauigkeit</td><td>93,21 % mAP@50</td><td>Variable, fehleranfällig</td></tr>
+          <tr><td>Hardware</td><td>Smartphone / Tablet</td><td>MDE-Geräte / Scanner</td></tr>
+          <tr><td>ERP-Integration</td><td>JSON API, sofort</td><td>Manuelle Eingabe</td></tr>
+          <tr><td>3D-Verständnis</td><td>2D + 3D Fusion</td><td>Nicht verfügbar</td></tr>
+          <tr><td>Skalierung</td><td>SaaS-Modell, unbegrenzt</td><td>Personalabhängig</td></tr>
+          <tr><td>Kosten</td><td>Software only</td><td>Hardware + Personal</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section" id="cta">
+  <div class="cta-glow"></div>
+  <div class="container">
+    <div class="cta-inner animate-in">
+      <div class="section-eyebrow" style="text-align: center;">Bereit für die Zukunft?</div>
+      <h2>Starten Sie mit<br>KI-gestützter Inventur</h2>
+      <p>Kein Spam. Keine Verpflichtung. Nur eine Demo.</p>
+    </div>
+    <div class="cta-cards animate-in">
+      <div class="cta-card">
+        <div class="cta-card-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+        </div>
+        <h3>Demo buchen</h3>
+        <p>Sehen Sie die Technologie live in Aktion. 30-minütige Demo mit unserem Team.</p>
+        <a href="mailto:janillogomez@work.proton.me?subject=Demo%20anfragen" class="cta-card-btn blue">Demo anfragen</a>
+      </div>
+      <div class="cta-card">
+        <div class="cta-card-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Pilotkunde werden</h3>
+        <p>Testen Sie Inventray One in Ihrem Betrieb. Begrenzte Plätze für Early Adopter.</p>
+        <a href="mailto:janillogomez@work.proton.me?subject=Pilotkunde%20werden" class="cta-card-btn green">Jetzt bewerben</a>
+      </div>
+      <div class="cta-card">
+        <div class="cta-card-icon purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.05 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3>Partnerschaft anfragen</h3>
+        <p>Für Investoren, Systemintegratoren und strategische Partner.</p>
+        <a href="mailto:janillogomez@work.proton.me?subject=Partnerschaft" class="cta-card-btn purple">Kontakt aufnehmen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-text">© 2026 Inventray. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="javascript:void(0)" onclick="document.getElementById('datenschutzModal').classList.add('open')">Datenschutz</a>
+      <a href="javascript:void(0)" onclick="document.getElementById('impressumModal').classList.add('open')">Impressum</a>
+    </div>
+  </div>
+</footer>
+
+<!-- IMPRESSUM MODAL -->
+<div class="modal-overlay" id="impressumModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('impressumModal').classList.remove('open')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h2>Impressum</h2>
+    <h3>Angaben gemäß § 5 DDG</h3>
+    <p>
+      Joshua Rafael Anillo Gomez<br>
+      Wildkamp 79<br>
+      38226 Salzgitter<br>
+      Deutschland
+    </p>
+    <h3>Kontakt</h3>
+    <p>
+      Telefon: +49 176 34387212<br>
+      E-Mail: <a href="mailto:janillogomez@work.proton.me">janillogomez@work.proton.me</a>
+    </p>
+    <h3>Steuernummer</h3>
+    <p>51/101/25909</p>
+    <h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
+    <p>
+      Joshua Rafael Anillo Gomez<br>
+      Wildkamp 79<br>
+      38226 Salzgitter
+    </p>
+    <h3>Haftungsausschluss</h3>
+    <p>Die Inhalte dieser Website wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.</p>
+  </div>
+</div>
+
+<!-- DATENSCHUTZ MODAL -->
+<div class="modal-overlay" id="datenschutzModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('datenschutzModal').classList.remove('open')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h2>Datenschutzerklärung</h2>
+
+    <h3>1. Verantwortlicher</h3>
+    <p>
+      Joshua Rafael Anillo Gomez<br>
+      Wildkamp 79<br>
+      38226 Salzgitter<br>
+      E-Mail: <a href="mailto:janillogomez@work.proton.me">janillogomez@work.proton.me</a><br>
+      Telefon: +49 176 34387212
+    </p>
+
+    <h3>2. Allgemeines zur Datenverarbeitung</h3>
+    <p>Der Schutz Ihrer personenbezogenen Daten ist uns wichtig. Wir verarbeiten Ihre Daten ausschließlich auf Grundlage der gesetzlichen Bestimmungen, insbesondere der Datenschutz-Grundverordnung (DSGVO) und des Bundesdatenschutzgesetzes (BDSG).</p>
+
+    <h3>3. Hosting</h3>
+    <p>Diese Website wird bei einem externen Dienstleister gehostet (Hoster). Die personenbezogenen Daten, die auf dieser Website erfasst werden, werden auf den Servern des Hosters gespeichert. Hierbei kann es sich um IP-Adressen, Kontaktanfragen, Meta- und Kommunikationsdaten, Vertragsdaten, Kontaktdaten, Namen, Websitezugriffe und sonstige Daten handeln, die über eine Website generiert werden. Der Einsatz des Hosters erfolgt im Interesse einer sicheren, schnellen und effizienten Bereitstellung (Art. 6 Abs. 1 lit. f DSGVO).</p>
+
+    <h3>4. Server-Log-Dateien</h3>
+    <p>Der Hosting-Provider erhebt und speichert automatisch Informationen in sogenannten Server-Log-Dateien, die Ihr Browser automatisch übermittelt. Dies sind: Browsertyp und -version, verwendetes Betriebssystem, Referrer-URL, Hostname des zugreifenden Rechners, Uhrzeit der Serveranfrage und IP-Adresse. Diese Daten werden nicht mit anderen Datenquellen zusammengeführt. Grundlage ist Art. 6 Abs. 1 lit. f DSGVO.</p>
+
+    <h3>5. Kontaktaufnahme per E-Mail</h3>
+    <p>Wenn Sie uns per E-Mail kontaktieren, werden Ihre Angaben einschließlich der von Ihnen angegebenen Kontaktdaten zum Zwecke der Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter. Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen) bzw. Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Beantwortung Ihrer Anfrage).</p>
+
+    <h3>6. Cookies</h3>
+    <p>Diese Website verwendet derzeit keine Cookies und keine Tracking- oder Analyse-Dienste. Sollte dies in Zukunft geändert werden, wird diese Datenschutzerklärung entsprechend aktualisiert.</p>
+
+    <h3>7. Keine Weitergabe an Dritte</h3>
+    <p>Eine Übermittlung Ihrer persönlichen Daten an Dritte zu anderen als den im Folgenden aufgeführten Zwecken findet nicht statt. Wir geben Ihre persönlichen Daten nur an Dritte weiter, wenn Sie Ihre ausdrückliche Einwilligung dazu erteilt haben (Art. 6 Abs. 1 lit. a DSGVO), dies für die Vertragserfüllung erforderlich ist (Art. 6 Abs. 1 lit. b DSGVO) oder eine gesetzliche Verpflichtung besteht (Art. 6 Abs. 1 lit. c DSGVO).</p>
+
+    <h3>8. Ihre Rechte</h3>
+    <p>Sie haben gegenüber uns folgende Rechte hinsichtlich der Sie betreffenden personenbezogenen Daten: Recht auf Auskunft (Art. 15 DSGVO), Recht auf Berichtigung (Art. 16 DSGVO), Recht auf Löschung (Art. 17 DSGVO), Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO), Recht auf Datenübertragbarkeit (Art. 20 DSGVO) sowie Recht auf Widerspruch gegen die Verarbeitung (Art. 21 DSGVO). Sie haben zudem das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung Ihrer personenbezogenen Daten zu beschweren.</p>
+
+    <h3>9. Aktualität</h3>
+    <p>Diese Datenschutzerklärung ist aktuell gültig. Stand: April 2026.</p>
+  </div>
+</div>
+
+<!-- SCROLL TO TOP -->
+<button class="scroll-top" id="scrollTop" aria-label="Nach oben scrollen" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script>
+// Splash screen - iOS compatible
+(function() {
+  var splash = document.getElementById('splash');
+  var dismissed = false;
+
+  function dismissSplash() {
+    if (dismissed) return;
+    dismissed = true;
+    splash.classList.add('fade-out');
+    setTimeout(function() {
+      splash.classList.add('hidden');
+    }, 700);
+  }
+
+  // Primary: after 2.4s from DOMContentLoaded
+  setTimeout(dismissSplash, 2400);
+
+  // Fallback: on window load + delay
+  window.addEventListener('load', function() {
+    setTimeout(dismissSplash, 2000);
+  });
+
+  // Safety net: always dismiss after 4s no matter what
+  setTimeout(dismissSplash, 4000);
+})();
+
+// Scroll-triggered animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.animate-in').forEach(el => observer.observe(el));
+
+// Count-up animation for metrics
+(function() {
+  var counted = false;
+
+  function runCountUp() {
+    if (counted) return;
+    counted = true;
+    var counters = document.querySelectorAll('[data-count]');
+    counters.forEach(function(el) {
+      var target = parseFloat(el.getAttribute('data-count'));
+      var decimals = parseInt(el.getAttribute('data-decimal')) || 0;
+      var prefix = el.getAttribute('data-prefix') || '';
+      var numEl = el.querySelector('.count-num');
+      if (!numEl) return;
+
+      var duration = 1800;
+      var startTime = null;
+
+      function easeOut(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = Math.min((timestamp - startTime) / duration, 1);
+        var easedProgress = easeOut(progress);
+        var current = easedProgress * target;
+        var formatted = current.toFixed(decimals).replace('.', ',');
+        numEl.textContent = prefix + formatted;
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      }
+
+      requestAnimationFrame(step);
+    });
+  }
+
+  // Start count-up after splash screen ends (3s delay)
+  setTimeout(runCountUp, 3000);
+})();
+
+// Nav background on scroll + scroll-to-top button
+const nav = document.querySelector('nav');
+const scrollTopBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+  nav.style.borderBottomColor = window.scrollY > 50 ? 'var(--border)' : 'transparent';
+  scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
 </script>
-    
-    <footer>
-        <p>© 2024 My Cool Website</p>
-    </footer>
 </body>
 </html>
-
